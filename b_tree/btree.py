@@ -1,49 +1,53 @@
-# According to Knuth's definition, a B-tree of order m is a tree which satisfies the following properties:[7]
-
-# 1. Every node has at most m children.
-# 2. Every internal node has at least ⌈m/2⌉ children.
-# 3. Every non-leaf node has at least two children.
-# 4. All leaves appear on the same level and carry no information.
-# 5. A non-leaf node with k children contains k−1 keys.
-
-from typing import List
-
-
-# TODO: deixar keys, children como dado interno
-# TODO: checar busca
-# TODO: split children
-# TODO: printar árvore
+# TODO:
+# - Testar
+#     - fazer prints
+# - encapsular
 
 # https://www.geeksforgeeks.org/insert-operation-in-b-tree/
 class Btree:
     def __init__(self, order: int):
         self.order: int = order
-        self.children = [None] * self.order
+        self.children = []
         self.parent = None
-        self.keys = [None] * (self.order - 1)
+        self.keys = []
 
-    @staticmethod
-    def search(btree, element: int):
-        node = btree
-
-        while True:
-            for idx in range(len(node.keys)):
-                if idx == len(node.keys) - 1:
-                    idx += 1
-                    break
-
-                if node.keys[idx + 1] > element:
-                    break
-                elif node.keys[idx + 1] == element:
-                    return node, idx
-
-            if node.children[idx]:
-                node = node.children[idx]
-            else:
+    def insert(self, element: int, children=None):
+        insert_idx = 0
+        for idx, key in enumerate(self.keys):
+            if key > element:
+                insert_idx = idx
                 break
 
-    def insert(element: int):
-        raise NotImplementedError
+        if len(self.children) >= insert_idx + 1 and not children:
+            self.children[insert_idx].insert(element)
 
-    def _split_children(self):
-        raise NotImplementedError
+        if len(self.keys) < self.order - 1:
+            self.keys = self.keys[: insert_idx - 1] + element + self.keys[insert_idx:]
+
+            if children:
+                self.children = (
+                    self.children[: insert_idx - 1]
+                    + element
+                    + self.children[insert_idx:]
+                )
+
+            if len(self.keys) == self.order - 1:
+                self.promote()
+
+    def promote(self):
+        middle_idx = int((self.order - 1) / 2)
+        middle_key = self.keys[middle_idx]
+
+        right_tree = Btree(self.order)
+        right_tree.order = self.keys[middle_idx + 1 :]
+        right_tree.children = self.children[middle_idx + 1 :]
+
+        self.keys = self.keys[:middle_idx]
+        self.children = self.children[:middle_idx]
+
+        if not self.parent:
+            self.parent = right_tree.parent = Btree(self.order)
+            self.parent.keys[0] = middle_key
+            self.parent.children = [self, right_tree]
+        else:
+            self.parent.insert(middle_key, [self, right_tree])
