@@ -25,16 +25,18 @@ class Btree:
         return f"Btree(order={self.order})"
 
     def __str__(self) -> str:
-        line = [self.root]
+        level = [self.root]
 
         out = ""
-        while line:
-            item = line.pop(0)
-            out += str(item) + "\n"
+        while level:
+            out += " ".join([str(i) for i in level]) + "\n"
 
-            for child in item.children:
-                line.append(child)
+            new_level = []
+            for item in level:
+                for child in item.children:
+                    new_level.append(child)
 
+            level = new_level
         return out
 
 
@@ -108,3 +110,7 @@ class BtreeNode:
             + [right_tree]
             + self.parent.children[insert_idx + 1 :]
         )
+
+        # Eu acho que os parentes deviam ter promovidos de forma recursiva, mas algum erro de ordeção de parentes e filhos está acumulando...
+        #if len(self.parent.keys) == self.order:
+        #    self.parent.promote()

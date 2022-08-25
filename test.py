@@ -18,6 +18,7 @@ elements = [
 
 for element in elements:
     btree.insert(element)
+    print(btree)
 
 print("btree")
 print(btree)
