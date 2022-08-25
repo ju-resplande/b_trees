@@ -1,6 +1,6 @@
-from b_tree.btree import Btree
+from b_tree.btree import BTree
 
-btree = Btree(3)
+btree = BTree(3)
 
 elements = [
     3,
@@ -22,12 +22,13 @@ elements = [
 
 for element in elements:
     btree.insert(element)
+    print(btree.height)
     print(btree)
 
 print("btree")
 print(btree)
 
 print(btree.search(39))
-print(btree.search(42))
+print(btree.search(43))
 
 print(btree.height)
