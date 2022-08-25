@@ -1,11 +1,12 @@
 """
 https://www.ime.usp.br/~pf/estruturas-de-dados/aulas/B-trees.html
 """
+import math
 
 
-class Btree:
+class BTree:
     def __init__(self, order: int):
-        self.root = BtreeNode(order)
+        self.root = BTreeNode(order)
         self.height = -1
 
     def insert(self, element: int):
@@ -22,7 +23,7 @@ class Btree:
         return self.root.search(element)
 
     def __repr__(self) -> str:
-        return f"Btree(order={self.order})"
+        return f"BTree(order={self.order})"
 
     def __str__(self) -> str:
         level = [self.root]
@@ -40,7 +41,7 @@ class Btree:
         return out
 
 
-class BtreeNode:
+class BTreeNode:
     def __init__(self, order: int):
         self.order: int = order
         self.children = []
@@ -48,7 +49,7 @@ class BtreeNode:
         self.keys = []
 
     def __repr__(self) -> str:
-        return f"BtreeNode(order={self.order}, keys={self.keys})"
+        return f"BTreeNode(order={self.order}, keys={self.keys})"
 
     def __str__(self) -> str:
         return str(self.keys)
@@ -85,10 +86,10 @@ class BtreeNode:
                 self.promote()
 
     def promote(self):
-        middle_idx = int(len(self.keys) / 2)
+        middle_idx = math.floor((len(self.keys) - 1) / 2)
         middle_key = self.keys[middle_idx]
 
-        right_tree = BtreeNode(self.order)
+        right_tree = BTreeNode(self.order)
         right_tree.keys = self.keys[middle_idx + 1 :]
         right_tree.children = self.children[middle_idx + 1 :]
         #Update parents on the right tree
@@ -99,7 +100,7 @@ class BtreeNode:
         self.children = self.children[: middle_idx + 1]
 
         if not self.parent:
-            self.parent = BtreeNode(self.order)
+            self.parent = BTreeNode(self.order)
             self.parent.children = [self]
 
         right_tree.parent = self.parent
@@ -114,6 +115,7 @@ class BtreeNode:
             + self.parent.children[insert_idx + 1 :]
         )
 
-        # Eu acho que os parentes deviam ter promovidos de forma recursiva, mas algum erro de ordeção de parentes e filhos está acumulando...
+        # Parentes são promovidos de forma recursiva
         if len(self.parent.keys) == self.order:
             self.parent.promote()
+        
