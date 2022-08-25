@@ -1,7 +1,7 @@
 """
 https://www.ime.usp.br/~pf/estruturas-de-dados/aulas/B-trees.html
 """
-
+import math
 
 class BPlusTree:
     def __init__(self, order: int):
@@ -62,12 +62,16 @@ class BPlusTreeNode:
         return str(self.keys)
 
     def search(self, element: int):
+        is_leaf = len(self.children) == 0
         idx = 0
 
         for key in self.keys:
-            if element == key:
+            if element == key and is_leaf:
                 return key
             elif element < key:
+                break
+            elif element == key:
+                idx += 1
                 break
             idx += 1
 
@@ -109,8 +113,11 @@ class BPlusTreeNode:
         self.keys = self.keys[:middle_idx]
         self.children = self.children[: copy_idx]
 
-        right_tree.next_node = self.next_node
-        self.next_node = right_tree
+        if is_leaf:
+            right_tree.next_node = self.next_node
+            self.next_node = right_tree
+        else:
+            self.next_node = None
 
         if not self.parent:
             self.parent = BPlusTreeNode(self.order)

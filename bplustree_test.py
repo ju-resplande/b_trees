@@ -33,7 +33,7 @@ for element in elements:
 print("b plus tree")
 print(btree)
 
-#print(btree.search(39))
-#print(btree.search(43))
+print(btree.search(39))
+print(btree.search(43))
 
-#print(btree.height)
+print(btree.height)
