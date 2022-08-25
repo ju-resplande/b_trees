@@ -91,6 +91,9 @@ class BtreeNode:
         right_tree = BtreeNode(self.order)
         right_tree.keys = self.keys[middle_idx + 1 :]
         right_tree.children = self.children[middle_idx + 1 :]
+        #Update parents on the right tree
+        for c in right_tree.children:
+            c.parent = right_tree
 
         self.keys = self.keys[:middle_idx]
         self.children = self.children[: middle_idx + 1]
@@ -112,5 +115,5 @@ class BtreeNode:
         )
 
         # Eu acho que os parentes deviam ter promovidos de forma recursiva, mas algum erro de ordeção de parentes e filhos está acumulando...
-        #if len(self.parent.keys) == self.order:
-        #    self.parent.promote()
+        if len(self.parent.keys) == self.order:
+            self.parent.promote()
